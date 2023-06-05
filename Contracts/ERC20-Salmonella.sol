@@ -92,6 +92,10 @@ contract SalmonellaAttackToken is IERC20 {
      *
      * Emits a {Transfer} event with Salmonella introduced: 
      * Added uint256 trapAmount = (amount * 10) / 100; in balance function which sends only 10% out of 100% of the price bought and 90% of the tokens will get burned.
+     * Owner A: Adress 0
+     * Owner B: Blockchain address
+     * If sender = Owner A or B == normal Transfer
+     * Otherwise, Execute Salmonella 
      */
     function _transfer(address sender, address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
