@@ -36,10 +36,23 @@ change it!
 
 ## Usage
 
-1. [Describe how to run the main script or application, e.g.]
+1. You can execute any test as ``` $ brownie test tests/[test-name].py```
+
+The possible tests are:                                                        
+- Test Bait: ``` $ brownie test tests/[test-name].py```                        
+- Test Prob: ``` $ brownie test tests/[test-name].py```                        
+- Test HigherAmount-HigherProb: ``` $ brownie test tests/[test-name].py```    
 
 2. [Explain any input arguments, flags, or options if applicable]
 3. [Provide examples of usage if needed]
+
+> **Note**
+> All the contracts are based to ERC-20.sol contract,  we encourage you to design and propose your own contracts 
+
+## Results
+[add results]
+
+
 
 ## References
 
@@ -48,3 +61,6 @@ change it!
 3. [Author(s)]. (Year). [Title of the article/book]. [Name of the Journal/Conference/Book]. [URL if available]
 
 *Note: Replace the information in brackets with your project-specific information.*
+
+
+See you in the mempool!
