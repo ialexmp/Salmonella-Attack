@@ -2,29 +2,37 @@
 
 ## Abstract
 
-This project aims to explore and implement various aspects of Blockchain technology in order to [describe the goal of your project, e.g., create a decentralized application, improve the security of transactions, or optimize the consensus mechanism]. The project focuses on [specify the main technologies or platforms, e.g., Ethereum, Hyperledger Fabric, or Bitcoin]. It includes [mention the main components or modules, e.g., smart contracts, a user interface, or a backend server] to achieve the desired functionality.
-
-The primary objective is to [state the primary objective, e.g., enhance transparency, improve efficiency, or enable secure data storage]. The project demonstrates the potential of Blockchain technology in the context of [specify the domain or industry, e.g., finance, supply chain, or healthcare].
+[Insert Abstract ...]
 
 ## Dependencies
 
 This project requires the following software and libraries:
 
-- python3 version 3.7 or greater, python3-dev
-- [ganache](https://github.com/trufflesuite/ganache) - tested with version 7.0.2
-- [Software/Library 3, version x.x.x or later, and installation link if available]
+- [Brownie](https://eth-brownie.readthedocs.io/en/stable/install.html) - tested with version v1.19.3
+
+Brownie has the following dependencies:
+  - Python3 version 3.7 or greater, python3-dev
+  - [Ganache](https://github.com/trufflesuite/ganache) - tested with version 7.0.2
 
 
 ## Setup and Installation
 
-1. Clone the repository:
+1. Install the required [dependencies](##Dependencies)
 
-git clone https://github.com/yourusername/your-project-name.git
-cd your-project-name
+2. Initialize a Brownie project ```$ brownie init``` 
 
-2. Install the required dependencies:
+3. Clone the repository:
+  ```git clone https://github.com/ialexmp/Salmonella-Attack.git [cd your-project-name] ```
 
-3. [Add any additional setup or configuration steps if needed]
+4. Open the terminal and compile the Smart contract using ```$ brownie compile```
+
+5. Open the terminal and initialize the development Blockchain ```$ brownie console```
+
+> :warning: Every time you change a smart contract, re-initialize the development Blockchain using the previous command and redeploy your contracts.
+Otherwise, you will be querying/interacting your previous contract. Contracts
+are (in general) immutable. Once you have deployed a contract, you can not
+change it! 
+
 
 ## Usage
 
