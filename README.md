@@ -15,6 +15,7 @@ Brownie has the following dependencies:
   - [Ganache](https://github.com/trufflesuite/ganache) - tested with version 7.0.2
 
 
+
 ## Setup and Installation
 
 1. Install the required [dependencies](##Dependencies)
@@ -34,14 +35,16 @@ are (in general) immutable. Once you have deployed a contract, you can not
 change it! 
 
 
+
 ## Usage
 
-1. You can execute any test as ``` $ brownie test tests/[test-name].py```
+You can execute any test as follows:  ``` $ brownie test tests/[test-name].py```
 
-The possible tests are:                                                        
-- Test Bait: ``` $ brownie test tests/[test-name].py```                        
-- Test Prob: ``` $ brownie test tests/[test-name].py```                        
-- Test HigherAmount-HigherProb: ``` $ brownie test tests/[test-name].py```    
+- The possible tests are: 
+                                                       
+  - Test Salmonella Simulation Bait: ``` $ brownie test tests/[test-name].py```                        
+  - Test Salmonella Probability Gambling: ``` $ brownie test tests/[test-name].py```                        
+  - Test Salmonella Risk Amount: ``` $ brownie test tests/[test-name].py```    
 
 2. [Explain any input arguments, flags, or options if applicable]
 3. [Provide examples of usage if needed]
@@ -50,6 +53,14 @@ The possible tests are:
 > All the contracts are based to ERC-20.sol contract,  we encourage you to design and propose your own contracts 
 
 ## Results
+
+#### Salmonella Simulation Bait.
+[add results]
+
+#### Salmonella Probability Gambling.
+[add results]
+
+#### Salmonella Risk Amount.
 [add results]
 
 
