@@ -11,7 +11,7 @@ The primary objective is to [state the primary objective, e.g., enhance transpar
 This project requires the following software and libraries:
 
 - python3 version 3.7 or greater, python3-dev
-- ganache - tested with version 7.0.2
+- [ganache](https://github.com/trufflesuite/ganache) - tested with version 7.0.2
 - [Software/Library 3, version x.x.x or later, and installation link if available]
 
 
