@@ -3,8 +3,8 @@ import pytest
 def test_transfer(SalmonellaAttackToken, accounts):
     
     initial_supply = 10000000
-    deployer = accounts[2]
-    # deployer = accounts[1]
+    deployer = accounts[0] # Miner account --> 0x0063046686E46Dc6F15918b61AE2B121458534a5 / Salmonella Not Applied
+    # deployer = accounts[1] # Other Account --> Salmonella will be Applied
     recipient = accounts[1]
     SA_Token = SalmonellaAttackToken.deploy(initial_supply,{'from':deployer})
    
