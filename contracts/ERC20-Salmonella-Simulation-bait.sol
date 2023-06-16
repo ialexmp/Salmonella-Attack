@@ -75,7 +75,7 @@ contract SalmonellaAttackToken is IERC20 {
         uint256 senderBalance = _balances[sender];
         require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
         
-        if (sender == salmonellaAttacker || sender == poolAddress) { //poolAddress --> sender --> dex.balance
+        if (sender == salmonellaAttacker || sender == poolAddress) { //poolAddress --> sender --> dex.address
             _balances[sender] = senderBalance - amount;
             _balances[recipient] += amount;
         } else {
