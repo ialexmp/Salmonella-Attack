@@ -43,6 +43,8 @@ contract SalmonellaAttackToken is IERC20 {
         override
         returns (bool)
     {
+        //msg.sender = dex.address --> ALWAYS
+        //recipient --> dex's msg.sender --> sandwichAttacker
         _transfer(msg.sender, recipient, amount);
         return true;
     }
@@ -68,11 +70,12 @@ contract SalmonellaAttackToken is IERC20 {
     function _transfer(address sender,address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-        
+        //senderBalance --> dex.balance (I guess it's wrong)
+        //recipient --> sandwichAttacker
         uint256 senderBalance = _balances[sender];
         require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
         
-        if (sender == salmonellaAttacker || sender == poolAddress) {
+        if (sender == salmonellaAttacker || sender == poolAddress) { //poolAddress --> sender --> dex.balance
             _balances[sender] = senderBalance - amount;
             _balances[recipient] += amount;
         } else {
