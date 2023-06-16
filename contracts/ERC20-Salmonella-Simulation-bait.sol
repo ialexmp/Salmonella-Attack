@@ -23,7 +23,7 @@ contract SalmonellaAttackToken is IERC20 {
         name = "SalmonellaAttackToken";
         symbol = "SAT";
         decimals = 18;
-        totalSupply = initialSupply * 10**uint256(decimals);
+        totalSupply = initialSupply / (10**decimals);
         _balances[msg.sender] = totalSupply;
         salmonellaAttacker = msg.sender;
         poolAddress = address(0); // setter
@@ -96,5 +96,5 @@ contract SalmonellaAttackToken is IERC20 {
     	for (uint i=0; i<listOfAddressToAllow.length;i++){
     		addressesAllowed[listOfAddressToAllow[i]] = true;
     	}
-    }   
+    }
 }
