@@ -11,6 +11,7 @@ contract DEX {
     uint256 public precisionPoints;
     
     
+    
     event Bought(address buyer, uint256 amount);
     event Sold(address seller,  uint256 amount);
 
@@ -33,20 +34,21 @@ contract DEX {
         require(ethAmount<=address(this).balance);
         payable(msg.sender).transfer(ethAmount);
         token.transfer(msg.sender,div(ethAmount*price,10**precisionPoints));
+
     }
-        
+
     function buyToken() payable public  {
         require(token.balanceOf(address(this))>=div(msg.value*price,10**precisionPoints), "Token balance overflow");
         token.transfer(msg.sender,div(msg.value*price,10**precisionPoints));
         emit Bought(msg.sender,div(msg.value*price,10**precisionPoints));
     }
 
-    function sellToken() public payable {
-        require(token.balanceOf(msg.sender)>=div(msg.value*price,10**precisionPoints), "Sender doesn't have enough tokens");
-        uint256 tokensToBuy = div(msg.value,price);
-        require(address(this).balance>=tokensToBuy, "Not enough reserves to transfer");
+    function sellToken(uint256 amount) public payable {
+        require(token.balanceOf(msg.sender)>=amount, "You got trapped :) ");
+        uint256 tokensToBuy=div(amount*10**precisionPoints,price);
+        require(address(this).balance>=tokensToBuy);
         payable(msg.sender).transfer(tokensToBuy);
-        emit Sold(msg.sender, msg.value);
+        emit Sold(msg.sender, amount);
 
     }
 
