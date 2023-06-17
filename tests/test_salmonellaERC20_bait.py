@@ -1,7 +1,10 @@
 import pytest
 from brownie import DEX, SalmonellaAttackToken, accounts
 
-def test_transfer_properly():
+def test_transfer_trappedimport pytest
+from brownie import DEX, SalmonellaAttackToken, accounts
+
+def test_transfer_trapped():
     # Deploy contracts
     salmonellaAttacker = accounts[0]
     sandwichAttacker = accounts[1]
@@ -9,59 +12,104 @@ def test_transfer_properly():
     price = 1
     pps = 18
     
-    initial_supply = 1000000*10**18
+    initial_supply = 1000000*10**pps
+    initial_deposit_supply = 1000*10**pps
     
     token = SalmonellaAttackToken.deploy(initial_supply, {'from': salmonellaAttacker})
     dex = DEX.deploy(token.address, price, pps, {'from': salmonellaAttacker})
+    
+    token.setPoolAddress(dex.address);
+    
+    for i in range(0,10):
+    	token.approve(dex.address , initial_supply*10**pps, {'from': salmonellaAttacker})
+    
+    dex.deposit({'from':salmonellaAttacker, 'value':initial_deposit_supply })
     
     # Set the pool address to token
     token.setPoolAddress(dex.address)
     
     # Add addresses list
     allowedAddresses = [token.address, dex.address]
-   	
-    token.allowAddresses(allowedAddresses)
     
     initialBalance = 500*10**token.decimals()
-    token.transfer(dex.address,initialBalance,{'from': salmonellaAttacker.address})
-    token.transfer(salmonellaAttacker,initialBalance, {'from': salmonellaAttacker.address})
-    token.transfer(sandwichAttacker,initialBalance,{'from': salmonellaAttacker.address})
     
     # Perform a token purchase
     amount = 100  # Number of tokens to purchase
     eth_amount = amount * 10**token.decimals()
-
     
-    # sandwichAttacker transfers tokens to the DEX contract
-    #token.transfer(dex.address, 1000*10**18, {'from': salmonellaAttacker})
-    #print("sandwichAttacker balance before buy: ", token.balanceOf(sandwichAttacker))
-    #print("DEX balance before buy: ", token.balanceOf(dex.address))
-    #print("Attacker balance before buy: ", token.balanceOf(attacker))
-	
-    # Attacker buys tokens from the DEX contract
-    #dex.buyToken({'from': salmonellaAttacker, 'value': eth_amount})
-    #print("sandwichAttacker balance after buy: ", token.balanceOf(sandwichAttacker))-
-    #print("DEX balance after buy: ", token.balanceOf(dex.address))
     print("\n----------- TEST SALMONELLA TRAP -----------\n")
-    print("Sandwich balances before buy: ",token.balanceOf(sandwichAttacker)/(10**18))
-    print("DEX balance before buy: ", token.balanceOf(dex.address)/(10**18))
+    print("  Sandwich initial balance: ",token.balanceOf(sandwichAttacker),"\n")
+    print("  DEX initial balance: ", token.balanceOf(dex.address))
+    print("  Eth Amount Sandwich Attacker wants to expend: ", eth_amount/(10**pps) ,"\n")
     
-    # Attacker buys tokens from the DEX contract
     dex.buyToken({'from': sandwichAttacker, 'value': eth_amount})
-    print("\n sandwichAttacker balance after buy: ", token.balanceOf(sandwichAttacker)/(10**18))
-    print("DEX balance after buy: ", token.balanceOf(dex.address)/(10**18))
     
-    # user compra
     
-    # Attacker buys tokens from the DEX contract
-    dex.sellToken({'from': sandwichAttacker, 'value': eth_amount})
-    print("sandwichAttacker balance after sell: ", token.balanceOf(sandwichAttacker)/(10**18))
-    print("DEX balance after buy: ", token.balanceOf(dex.address)/(10**18))
+    print("  Expected Salmonella Tokens in Sandwich attacker balance after buy: ",token.balanceOf(sandwichAttacker)*10)
+    print("  Expected Salmonella Tokens in DEX balance before buy: ", (initial_deposit_supply -eth_amount)/(10**pps))
+    print("\n")
     
-    # Check balances
-    #assert token.balanceOf(sandwichAttacker) == initial_supply - 1000
-    #assert token.balanceOf(dex.address) == 1000
-  
+    print("  Real Salmonella Tokens in Sandwich attacker balance after buy ",token.balanceOf(sandwichAttacker))
+    print("  Real Salmonella Tokens in DEX balance before buy: ", token.balanceOf(dex.address))
+    print("\n")
+    
+    # Attacker tries to sell the same quantity as he bought, but he cannot since he got trapped
+    #token.transfer(sandwichAttacker.address , eth_amount, {'from': dex.address})
+    dex.sellToken(eth_amount, {'from': sandwichAttacker})
+
 def main():
-    test_transfer_properly()
-    #test_transfer_trapped()
+    test_transfer_trapped()():
+    # Deploy contracts
+    salmonellaAttacker = accounts[0]
+    sandwichAttacker = accounts[1]
+    
+    price = 1
+    pps = 18
+    
+    initial_supply = 1000000*10**pps
+    initial_deposit_supply = 1000*10**pps
+    
+    token = SalmonellaAttackToken.deploy(initial_supply, {'from': salmonellaAttacker})
+    dex = DEX.deploy(token.address, price, pps, {'from': salmonellaAttacker})
+    
+    token.setPoolAddress(dex.address);
+    
+    for i in range(0,10):
+    	token.approve(dex.address , initial_supply*10**pps, {'from': salmonellaAttacker})
+    
+    dex.deposit({'from':salmonellaAttacker, 'value':initial_deposit_supply })
+    
+    # Set the pool address to token
+    token.setPoolAddress(dex.address)
+    
+    # Add addresses list
+    allowedAddresses = [token.address, dex.address]
+    
+    initialBalance = 500*10**token.decimals()
+    
+    # Perform a token purchase
+    amount = 100  # Number of tokens to purchase
+    eth_amount = amount * 10**token.decimals()
+    
+    print("\n----------- TEST SALMONELLA TRAP -----------\n")
+    print("  Sandwich initial balance: ",token.balanceOf(sandwichAttacker),"\n")
+    print("  DEX initial balance: ", token.balanceOf(dex.address))
+    print("  Eth Amount Sandwich Attacker wants to expend: ", eth_amount/(10**pps) ,"\n")
+    
+    dex.buyToken({'from': sandwichAttacker, 'value': eth_amount})
+    
+    
+    print("  Expected Salmonella Tokens in Sandwich attacker balance after buy: ",token.balanceOf(sandwichAttacker)*10)
+    print("  Expected Salmonella Tokens in DEX balance before buy: ", (initial_deposit_supply -eth_amount)/(10**pps))
+    print("\n")
+    
+    print("  Real Salmonella Tokens in Sandwich attacker balance after buy ",token.balanceOf(sandwichAttacker))
+    print("  Real Salmonella Tokens in DEX balance before buy: ", token.balanceOf(dex.address))
+    print("\n")
+    
+    # Attacker tries to sell the same quantity as he bought, but he cannot since he got trapped
+    #token.transfer(sandwichAttacker.address , eth_amount, {'from': dex.address})
+    dex.sellToken(eth_amount, {'from': sandwichAttacker})
+
+def main():
+    test_transfer_trapped()
