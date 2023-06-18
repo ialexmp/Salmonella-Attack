@@ -31,7 +31,7 @@ def test_transfer_trapped():
     token.setPoolAddress(dex.address)
     
     # Perform a token purchase
-    amount = 400  # Number of tokens to purchase
+    amount = 200  # Number of tokens to purchase
     eth_amount = amount * 10**token.decimals()
 
     print("\n----------- TEST SALMONELLA PROB TRAP -----------\n")
