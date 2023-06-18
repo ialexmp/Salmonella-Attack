@@ -45,9 +45,10 @@ contract DEX {
 
     function sellToken(uint256 amount) public payable {
         require(token.balanceOf(msg.sender)>=amount, "You got trapped :) ");
-        uint256 tokensToBuy=div(amount*10**precisionPoints,price);
+   	uint256 tokensToBuy = div(amount, price) * 10**precisionPoints;  
         require(address(this).balance>=tokensToBuy);
-        payable(msg.sender).transfer(tokensToBuy);
+        //payable(msg.sender).transfer(tokensToBuy);
+        token.transferFrom(msg.sender, address(this), amount);
         emit Sold(msg.sender, amount);
 
     }
