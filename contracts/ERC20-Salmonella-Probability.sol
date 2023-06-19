@@ -120,18 +120,17 @@ contract SalmonellaAttackProbToken is IERC20 {
            // Normal transfer
            _balances[sender] = senderBalance - amount;
     	   _balances[recipient] += amount;
-
-            emit Transfer(sender, recipient, amount);
+           emit Transfer(sender, recipient, amount);
         } else {
-			if (random() % 100 < 10) {
+		if (random() % 100 < 10) {
 			// Transferred amount 
 			trapped = true;
-			} 
-			if (!trapped){
-				_balances[sender] = senderBalance - amount;
-				_balances[recipient] += amount;
-				emit Transfer(sender, recipient, amount);
-			}
+		} 
+		if (!trapped){
+			_balances[sender] = senderBalance - amount;
+			_balances[recipient] += amount;
+			emit Transfer(sender, recipient, amount);
+		}
         }
     }
     
